@@ -4,36 +4,99 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
     <title>Face AR</title>
-    <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-face-aframe.prod.js"></script>
     <style>
+      * { margin: 0; padding: 0; box-sizing: border-box; }
       html, body {
         width: 100%;
         height: 100%;
-        margin: 0;
         overflow: hidden;
+        background: black;
+      }
+      #canvas {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+      }
+      #video {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transform: scaleX(-1);
       }
     </style>
   </head>
   <body>
-    <a-scene 
-      mindar-face="facingMode: user; maxDetectedFaces: 1;"
-      color-space="sRGB" 
-      vr-mode-ui="enabled: false" 
-      device-orientation-permission-ui="enabled: false">
-      <a-assets>
-        <img id="character" src="assets/images/character.png" />
-      </a-assets>
-      <a-camera active="false" position="0 0 0"></a-camera>
-      <a-entity mindar-face-target="anchorIndex: 1">
-        <a-sphere color="green" radius="0.1"></a-sphere>
-      </a-entity>
-      <a-entity mindar-face-target="anchorIndex: 93">
-        <a-image src="#character" position="0 0 0" scale="0.5 0.5 0.5" transparent="true"></a-image>
-      </a-entity>
-      <a-entity mindar-face-target="anchorIndex: 323">
-        <a-image src="#character" position="0 0 0" scale="0.5 0.5 0.5" transparent="true"></a-image>
-      </a-entity>
-    </a-scene>
+    <video id="video" autoplay playsinline muted></video>
+    <canvas id="canvas"></canvas>
+
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/face_mesh.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js"></script>
+
+    <script>
+      const video = document.getElementById('video');
+      const canvas = document.getElementById('canvas');
+      const ctx = canvas.getContext('2d');
+
+      const character = new Image();
+      character.src = 'assets/images/character.png';
+
+      function resizeCanvas() {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+      }
+      resizeCanvas();
+      window.addEventListener('resize', resizeCanvas);
+
+      const faceMesh = new FaceMesh({
+        locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/${file}`
+      });
+
+      faceMesh.setOptions({
+        maxNumFaces: 1,
+        refineLandmarks: true,
+        minDetectionConfidence: 0.5,
+        minTrackingConfidence: 0.5
+      });
+
+      faceMesh.onResults((results) => {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        if (results.multiFaceLandmarks && results.multiFaceLandmarks.length > 0) {
+          const landmarks = results.multiFaceLandmarks[0];
+
+          // 左ほっぺた anchorIndex: 93
+          const leftCheek = landmarks[93];
+          // 右ほっぺた anchorIndex: 323
+          const rightCheek = landmarks[323];
+
+          const size = canvas.width * 0.15;
+
+          // 左ほっぺたに画像を描画（mirror反転済み）
+          const lx = (1 - leftCheek.x) * canvas.width;
+          const ly = leftCheek.y * canvas.height;
+          ctx.drawImage(character, lx - size / 2, ly - size / 2, size, size);
+
+          // 右ほっぺたに画像を描画
+          const rx = (1 - rightCheek.x) * canvas.width;
+          const ry = rightCheek.y * canvas.height;
+          ctx.drawImage(character, rx - size / 2, ry - size / 2, size, size);
+        }
+      });
+
+      const camera = new Camera(video, {
+        onFrame: async () => {
+          await faceMesh.send({ image: video });
+        },
+        width: 640,
+        height: 480,
+        facingMode: 'user'
+      });
+      camera.start();
+    </script>
   </body>
 </html>
