@@ -2,7 +2,7 @@
 <html>
   <head>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
     <title>Face AR</title>
     <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-face-aframe.prod.js"></script>
@@ -17,7 +17,7 @@
   </head>
   <body>
     <a-scene 
-      mindar-face
+      mindar-face="facingMode: user; maxDetectedFaces: 1;"
       color-space="sRGB" 
       vr-mode-ui="enabled: false" 
       device-orientation-permission-ui="enabled: false">
