@@ -13,33 +13,24 @@
         margin: 0;
         overflow: hidden;
       }
-      .a-canvas {
-        width: 100% !important;
-        height: 100% !important;
-      }
     </style>
   </head>
   <body>
     <a-scene 
-      mindar-face="facingMode: user; filterMinCF: 0.0001; filterBeta: 0.0001;"
-      embedded
+      mindar-face
       color-space="sRGB" 
-      renderer="colorManagement: true, physicallyCorrectLights" 
       vr-mode-ui="enabled: false" 
       device-orientation-permission-ui="enabled: false">
       <a-assets>
         <img id="character" src="assets/images/character.png" />
       </a-assets>
       <a-camera active="false" position="0 0 0"></a-camera>
-      <!-- 鼻の頭（テスト用） -->
       <a-entity mindar-face-target="anchorIndex: 1">
         <a-sphere color="green" radius="0.1"></a-sphere>
       </a-entity>
-      <!-- 左のほっぺた -->
       <a-entity mindar-face-target="anchorIndex: 93">
         <a-image src="#character" position="0 0 0" scale="0.5 0.5 0.5" transparent="true"></a-image>
       </a-entity>
-      <!-- 右のほっぺた -->
       <a-entity mindar-face-target="anchorIndex: 323">
         <a-image src="#character" position="0 0 0" scale="0.5 0.5 0.5" transparent="true"></a-image>
       </a-entity>
