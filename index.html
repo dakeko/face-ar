@@ -43,7 +43,7 @@
       const ctx = canvas.getContext('2d');
 
       const character = new Image();
-      character.src = 'assets/images/character.png';
+      character.src = 'assets/images/dlogo.png';
 
       function resizeCanvas() {
         canvas.width = window.innerWidth;
@@ -78,13 +78,14 @@
 
           // 左ほっぺたに画像を描画（mirror反転済み）
           const lx = (1 - leftCheek.x) * canvas.width;
-          const ly = leftCheek.y * canvas.height;
+          const ly = leftCheek.y * canvas.height + 50;
           ctx.drawImage(character, lx - size / 2, ly - size / 2, size, size);
 
           // 右ほっぺたに画像を描画
-          const rx = (1 - rightCheek.x) * canvas.width;
-          const ry = rightCheek.y * canvas.height;
-          ctx.drawImage(character, rx - size / 2, ry - size / 2, size, size);
+          // const rx = (1 - rightCheek.x) * canvas.width;
+          // const ry = rightCheek.y * canvas.height;
+          // ctx.drawImage(character, rx - size / 2, ry - size / 2, size, size);
+
         }
       });
 
