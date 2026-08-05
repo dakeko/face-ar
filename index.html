@@ -74,11 +74,11 @@
           // 右ほっぺた anchorIndex: 323
           const rightCheek = landmarks[323];
 
-          const size = canvas.width * 0.12;
+          const size = canvas.width * 0.20;
 
           // 左ほっぺたに画像を描画（mirror反転済み）
           const lx = (1 - leftCheek.x) * canvas.width;
-          const ly = leftCheek.y * canvas.height + 50;
+          const ly = leftCheek.y * canvas.height + 20;
           ctx.drawImage(character, lx - size / 2, ly - size / 2, size, size);
 
           // 右ほっぺたに画像を描画
